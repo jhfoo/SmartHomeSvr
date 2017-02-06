@@ -4,7 +4,7 @@
   "description": "\"# koa-boilerplate\"",
   "main": "index.js",
   "scripts": {
-    "start":"./node_modules/.bin/supervisor -n exit server.js",
+    "start": "./node_modules/.bin/supervisor -n exit server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/jhfoo/koa-boilerplate#readme",
   "dependencies": {
+    "edimax-smartplug": "0.0.17",
     "koa": "^1.2.4",
     "koa-router": "^5.4.0",
     "koa-static": "^2.0.0",

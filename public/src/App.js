@@ -3,6 +3,18 @@ import React, { Component } from 'react';
 // import './App.css';
 
 class App extends Component {
+  onBedroomOn() {
+    window.socket.emit('DeviceAction', {
+      ip:'192.168.1.18',
+      state: 'ON'
+    });
+  }
+  onBedroomOff() {
+    window.socket.emit('DeviceAction', {
+      ip:'192.168.1.18',
+      state: 'OFF'
+    });
+  }
   render() {
     return (
       <div className="App">
@@ -12,7 +24,7 @@ class App extends Component {
            Select an action<br/><br/>
             <div className="ui raised segment">
               <div className="ui middle aligned animated selection divided list">
-                <div className="item">
+                <div className="item" onClick={() => this.onBedroomOn() }>
                   <div className="right floated content">
                     <i className="icon chevron right"></i>
                   </div>
@@ -21,7 +33,7 @@ class App extends Component {
                     <div className="description">Turn lights ON</div>
                   </div>
                 </div>
-                <div className="item">
+                <div className="item" onClick={() => this.onBedroomOff() }>
                   <div className="right floated content">
                     <i className="icon chevron right"></i>
                   </div>

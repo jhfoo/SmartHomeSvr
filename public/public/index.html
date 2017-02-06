@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="semantic/semantic.min.css" />
   <script src="js/jquery-3.1.1.min.js"></script>
   <script src="semantic/semantic.min.js"></script>
-  <script src="http://192.168.0.8:8080/socket.io/socket.io.js"></script>
+  <script src="http://192.168.1.20:8080/socket.io/socket.io.js"></script>
   <!--
       Notice the use of %PUBLIC_URL% in the tag above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -34,7 +34,7 @@
       To create a production bundle, use `npm run build`.
     -->
   <script>
-    var socket = io.connect('http://192.168.0.8:8080');
+    var socket = io.connect('http://192.168.1.20:8080');
     socket.on('connect', () => {
       console.log('Connected');
     });

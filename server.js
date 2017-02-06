@@ -13,6 +13,7 @@ var DEFAULT_CONFIG_FILENAME = 'defaults.json',
 var app = koa(),
   server = http.createServer(app.callback()),
   io = require('socket.io')(server),
+  SocketIoHandler = require('./lib/SocketIoHandler'),
   logger = log4js.getLogger(),
   config = loadConfig(CONFIG_FILENAME);
 
@@ -61,15 +62,7 @@ app.on('error', function (err) {
 });
 
 // setup socket.io events
-io.on('connection', (socket) => {
-  logger.debug('New Socket.io connection');
-  // NOTE: PING is a reserved event!
-  socket.on('pingy', (data) => {
-    logger.debug('PINGY received: ' + data);
-    socket.emit('pingy','pongy: ' + data);
-  });
-});
-
+SocketIoHandler(io);
 
 // start listening
 // NOTE: app.listen() doesn't enable socket.io. Use server.listen()
