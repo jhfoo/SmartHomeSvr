@@ -24,6 +24,7 @@
     "koa-router": "^5.4.0",
     "koa-static": "^2.0.0",
     "log4js": "^1.1.0",
+    "node-schedule": "^1.2.0",
     "socket.io": "^1.7.2"
   },
   "devDependencies": {

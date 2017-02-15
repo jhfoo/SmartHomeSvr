@@ -4,7 +4,8 @@ var fs = require('fs'),
   router = require('koa-router')(),
   log4js = require('log4js'),
   http = require('http'),
-  TestRoute = require('./lib/test');
+  TestRoute = require('./lib/test'),
+  Scheduler = require('./lib/scheduler');
 
 // constants
 var DEFAULT_CONFIG_FILENAME = 'defaults.json',
@@ -68,6 +69,9 @@ SocketIoHandler(io);
 // NOTE: app.listen() doesn't enable socket.io. Use server.listen()
 server.listen(config.WebService.ServicePort);
 logger.info('Listening on port ' + config.WebService.ServicePort);
+
+var scheduler = new Scheduler(config);
+scheduler.run();
 
 function loadConfig(filename) {
   // auto create

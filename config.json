@@ -2,5 +2,27 @@
   "WebService": {
     "ServicePort": 8080,
     "PublicPath" : "public/build"
-  }
+  },
+  "schedules":[
+    {
+      "frequency":"0 30 6 * * 1-5",
+      "event":{
+        "type":"DeviceAction",
+        "data":{
+          "state":"ON",
+          "ip":"192.168.1.18"
+        }
+      }
+    },
+    {
+      "frequency":"0 0 23 * * 1-5",
+      "event":{
+        "type":"DeviceAction",
+        "data":{
+          "state":"OFF",
+          "ip":"192.168.1.18"
+        }
+      }
+    }
+  ]
 }
