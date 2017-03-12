@@ -17,6 +17,7 @@ npm start
 
 # Todos
 Where does one begin? There's so much to do!
-- Create production npm startup
+- Tests!
+- Production npm startup
 - Feature parity between REST API and Websocket
 - Document APIs
