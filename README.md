@@ -1,3 +1,10 @@
+# Goals
+- Long term goals: unclear 
+- Short term goals: 
+  - Set up ESP-based environment monitors
+  - Set up Prometheus exports to key data
+  - (Optional) Set up Grafana to visualise Prometheus data
+
 # Installation
 
 ```

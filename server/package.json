@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "supervisor -n exit src/server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mqtt": "^4.1.0",
+    "prom-client": "^12.0.0",
+    "restify": "^8.5.1",
+    "supervisor": "^0.12.0"
+  }
+}
