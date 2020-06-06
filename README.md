@@ -6,11 +6,18 @@
   - (Optional) Set up Grafana to visualise Prometheus data
 
 # Installation
-
+### Server
+#### Assumptions/ Requirements
+- Node and NPM installed (v13 and above)
+- pm2 app instance running (for production only)
 ```
 git clone https://github.com/jhfoo/SmartHomeSvr
+cd server
 npm install
-npm start
+# run in developer mode
+npm run dev 
+# run in production mode (pm2)
+npm run prod
 ```
 
 # Defaults
