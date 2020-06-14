@@ -4,14 +4,15 @@ from uiflow import *
 import hat
 lcd.setRotation(1)
 import hat
-import ubinascii
 import machine
 import wifiCfg
 from m5mqtt import M5mqtt
 import json
+import util
 
 hat_env0 = hat.get(hat.ENV)
 CurrentPage = 0
+isDataSent = False
 
 def main():
     # init
@@ -38,17 +39,18 @@ def showPage0():
 
 def onIncomingTopicMsg(topic_data):
     data = json.loads(topic_data)
-    print (data["DeviceId"])
-    M5Led.off()
-  pass
+    if (isDataSent and data["DeviceId"] == util.DeviceId()):
+        M5Led.off()
+        isDataSent = False
+    pass
 
 
-m5mqtt.start()
 def showPage1():
     lcd.clear()
     lcd.image(0, 0, 'res/heart.jpg')
     m5mqtt = M5mqtt('umqtt_client', '192.168.1.224', 1883, '', '', 300)
     m5mqtt.subscribe(str('sensor-ack'), onIncomingTopicMsg)
+    m5mqtt.start()
     DeviceId = ubinascii.hexlify(machine.unique_id()).decode('utf-8')
 
     M5Led.on()
@@ -57,6 +59,7 @@ def showPage1():
         "HumiPercent": hat_env0.humidity,
         "DeviceId": DeviceId
     }
+    isDataSent = True
     m5mqtt.publish('sensor-data',json.dumps(data))
 
 def changePage():
