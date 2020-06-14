@@ -83,6 +83,8 @@ def sendTelemetry():
 
 def showPage1():
     global isDataSent, m5mqtt
+    # turn off lcd power
+    axp.setLDO2Volt(0)
     m5mqtt = M5mqtt('umqtt_client', apps.constants.MQTT_SERVER, apps.constants.MQTT_PORT, '', '', 300)
     m5mqtt.subscribe(str(TOPIC_ACK), onIncomingTopicMsg)
     m5mqtt.start()
