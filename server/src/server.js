@@ -30,9 +30,13 @@ MqClient.on('message', (topic, message) => {
     ReadingCounter.inc(1)
 
     let data = JSON.parse(message.toString())
-    TemperatureHist.observe({
+    TemperatureSumm.observe({
         DeviceId: data.DeviceId
     }, Math.floor(data.TempCel * 10))
+
+    HumiditySumm.observe({
+        DeviceId: data.DeviceId
+    }, Math.floor(data.HumiPercent * 10))
 
     MqClient.publish(MQTT.AckTopic, JSON.stringify({
         DeviceId: data.DeviceId
@@ -46,14 +50,23 @@ ReadingCounter = new PromClient.Counter({
 })
 // registry.registerMetric(ReadingCounter)
 
-TemperatureHist = new PromClient.Summary({
+TemperatureSumm = new PromClient.Summary({
     name: 'temperature',
     help: 'Environment temperature readings',
     labelNames: ['DeviceId'],
     // maxAgeSeconds: 60,
     // ageBuckets: 3
 })
-registry.registerMetric(TemperatureHist)
+registry.registerMetric(TemperatureSumm)
+
+HumiditySumm = new PromClient.Summary({
+    name: 'humidity',
+    help: 'Environment humidity readings',
+    labelNames: ['DeviceId'],
+    // maxAgeSeconds: 60,
+    // ageBuckets: 3
+})
+registry.registerMetric(HumiditySumm)
 
 console.log('Starting service...')
 var server = restify.createServer()
