@@ -8,7 +8,8 @@ const SERVICE = {
     },
     MQTT = {
         url: 'mqtt://mosquitto.service.yishun.consul',
-        DataTopic: 'sensor-data'
+        DataTopic: 'sensor-data',
+        AckTopic: 'sensor-ack',
     }
 
 // configure MQTT client
@@ -32,6 +33,10 @@ MqClient.on('message', (topic, message) => {
     TemperatureHist.observe({
         DeviceId: data.DeviceId
     }, Math.floor(data.TempCel * 10))
+
+    MqClient.publish(MQTT.AckTopic, JSON.stringify({
+        DeviceId: data.DeviceId
+    }))
 })
 
 // configure Prometheus client
