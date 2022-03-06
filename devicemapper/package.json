@@ -1,0 +1,21 @@
+{
+  "name": "devicemapper",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "supervisor -n exit src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "moleculer": "^0.14.19",
+    "moleculer-web": "^0.10.4",
+    "tplink-smarthome-api": "^4.2.0"
+  },
+  "devDependencies": {
+    "supervisor": "^0.12.0"
+  }
+}
