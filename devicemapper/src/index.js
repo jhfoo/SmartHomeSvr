@@ -41,7 +41,7 @@ startScanning()
 function startScanning() {
   TplinkClient = new tplink.Client()
   TplinkClient.startDiscovery().on('device-new', async (device) => {
-    let info = await device.sysInfo()
+    let info = await device.getSysInfo()
     console.log(info)
   })
 }
