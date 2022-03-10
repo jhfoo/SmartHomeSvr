@@ -1,7 +1,7 @@
 tplink = require('tplink-smarthome-api')  
 
 module.exports = {
-  update: getDeviceState,
+  getDeviceStates: getDeviceStates,
   setState: setDeviceState,
 }
 
@@ -11,13 +11,12 @@ const models = {
   }
 }
 
-async function getDeviceState(ctx, DeviceId, config) {
+async function getDeviceStates(ctx, DeviceId, config) {
   let driver = new tplink.Client()
   let device = await driver.getDevice({
     host: config.ip
   })
-  let DeviceInfo = await device.getSysInfo()
-  ctx.broker.logger.debug(DeviceInfo)
+  return await device.getSysInfo()
 }
 
 async function setDeviceState(ctx, DeviceConfig) {

@@ -1,5 +1,7 @@
 const { ServiceBroker } = require('moleculer'),
-  ApiService = require('moleculer-web')
+  ApiService = require('moleculer-web'),
+  BmsHandler = require('./BmsHandler'),
+  TplinkHandler = require('./TplinkHandler')
 
 const broker = new ServiceBroker({
   logLevel: 'debug',
@@ -14,12 +16,14 @@ const DeviceConfig = {
   SolarAuxSwitch: {
     ip: '192.168.88.51',
     driver: 'tplink',
-    isMonitor: false,
+    isMonitor: true,
+    onMonitor: TplinkHandler.onMonitor,
   },
   bms: {
     ip: '192.168.88.40',
     driver: 'custombms',
     isMonitor: true,
+    onMonitor: BmsHandler.onMonitor,
   }
 }
 
@@ -43,8 +47,9 @@ broker.createService({
 broker.createService({
   name: 'devicemanager',
   actions: {
-    update: monitorDevices,
+    getStates: getDeviceStates,
     setState: setDeviceState,
+    monitor: monitorDevices,
   }
 })
 
@@ -69,10 +74,25 @@ broker.start()
 })
 
 function startMonitoring() {
-  broker.call('devicemanager.update', {
+  broker.call('devicemanager.monitor', {
     config: DeviceConfig,
     drivers: DeviceDrivers,
   })
+}
+
+async function getDeviceStates(ctx) {
+  // validate DeviceId
+  if (!(ctx.params.DeviceId in DeviceConfig)) {
+    throw new Error(`Invalidate device id: ${ctx.params.DeviceId}`)
+  }
+
+  // validate device driver
+  const device = DeviceConfig[ctx.params.DeviceId]
+  if (!(device.driver in DeviceDrivers)) {
+    throw new Error(`Invalidate driver for DeviceId ${ctx.params.DeviceId}: ${device.driver}`)
+  }
+
+  return await DeviceDrivers[device.driver].getDeviceStates(ctx, ctx.params.DeviceId, device)
 }
 
 async function setDeviceState(ctx) {
@@ -93,16 +113,18 @@ async function setDeviceState(ctx) {
 async function monitorDevices(ctx) {
   ctx.broker.logger.debug(`monitorDevices: executing`)
 
-  let config = DeviceConfig
-  let DeviceIds = Object.keys(config)
+  let DeviceIds = Object.keys(DeviceConfig)
 
   for (let idx = 0; idx < DeviceIds.length; idx++) {
     try {
       let DeviceId = DeviceIds[idx]
-      if (ctx.params.config[DeviceId.isMonitor]) {
-        let DeviceDriver = config[DeviceId].driver
+      if (ctx.params.config[DeviceId].isMonitor) {
+        // device configured to be monitored
+        // ctx.broker.logger.debug(`Device to be monitored: ${DeviceId}`)
+        let DeviceDriver = DeviceConfig[DeviceId].driver
         if (DeviceDriver in ctx.params.drivers) {
-          await ctx.params.drivers[DeviceDriver].update(ctx, DeviceId, config[DeviceId])
+          // driver for device exists
+          await DeviceConfig[DeviceId].onMonitor(ctx, DeviceId, DeviceConfig[DeviceId])
         } else {
           throw new Error(`Unknown driver: ${DeviceDriver}`)
         }
