@@ -16,10 +16,14 @@ async function getDeviceStates(ctx, DeviceId, config) {
   let device = await driver.getDevice({
     host: config.ip
   })
-  return await device.getSysInfo()
+
+  const states = await device.getInfo()
+  ctx.broker.logger.debug(`states: ${states}`)    
+
+  return states
 }
 
-async function setDeviceState(ctx, DeviceConfig) {
+async function setDeviceState(ctx, DeviceId, DeviceConfig) {
   let driver = new tplink.Client()
   let device = await driver.getDevice({
     host: DeviceConfig.ip
