@@ -6,15 +6,17 @@ module.exports = {
     ip: '192.168.88.50',
     driver: 'tplink',
     isMonitor: false,
+    isMetric: true,
   },
   SolarAuxSwitch: {
     ip: '192.168.88.51',
     driver: 'tplink',
     isMonitor: true,
+    isMetric: true,
     onMonitor: TplinkHandler.onMonitor,
   },
   SolarPowerSwitch: {
-    ip: '192.168.88.231',
+    ip: '192.168.88.53',
     driver: 'tplink',
     isMonitor: true,
     onMonitor: TplinkHandler.onMonitor,

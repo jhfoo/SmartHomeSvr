@@ -53,6 +53,6 @@ broker.start()
 
 
 function startMonitoring() {
-  broker.call('devicemanager.monitor')
+  
 }
 

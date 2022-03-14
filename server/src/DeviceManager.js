@@ -1,3 +1,5 @@
+const PromClient = require('prom-client')
+
 module.exports = {
   getStates: getDeviceStates,
   setState: setDeviceState,
@@ -9,8 +11,44 @@ module.exports = {
 var DeviceConfig = {},
   DeviceDrivers = {}
 
-function getMetrics(ctx) {
-  return 'ok'
+async function getMetrics(ctx) {
+  const PromRegistry = PromClient.register
+  ctx.params.metrics = {}
+  ctx.params.metrics.energy = new PromClient.Gauge({
+    name: 'EnergyW',
+    help: 'Energy consumption',
+    labelNames: ['device'],
+    register: PromRegistry,
+  })
+
+  ctx.params.metrics.PowerRelay = new PromClient.Gauge({
+    name: 'PowerRelay',
+    help: 'Relay state (on/ off)',
+    labelNames: ['device'],
+    register: PromRegistry,
+  })
+
+  // iterate through devices
+  let DeviceIds = Object.keys(DeviceConfig)
+  MetricPromises = []
+  DeviceIds.forEach(async (DeviceId) => {
+    if (DeviceConfig[DeviceId].isMetric) {
+      MetricPromises.push(DeviceDrivers[DeviceConfig[DeviceId].driver].getMetrics(ctx, DeviceId, DeviceConfig[DeviceId]))
+    }
+  })
+  try {
+    // let DeviceId = DeviceIds[idx]
+    await Promise.all(MetricPromises)
+    const ret = await PromRegistry.metrics()
+    PromRegistry.clear()
+    ctx.meta.$responseType = 'text/plain'
+    return ret
+  } catch (err) {
+    ctx.broker.logger.error(err)
+  }
+// for (let idx = 0; idx < DeviceIds.length; idx++) {
+  // }
+
 }
 
 function init(config) {
@@ -52,7 +90,6 @@ async function monitorDevices(ctx) {
   ctx.broker.logger.debug(`monitorDevices: executing`)
 
   let DeviceIds = Object.keys(DeviceConfig)
-
   for (let idx = 0; idx < DeviceIds.length; idx++) {
     try {
       let DeviceId = DeviceIds[idx]
