@@ -109,9 +109,10 @@ async function monitorDevices(ctx) {
     }
   }
 
-  const RUN_INTERVAL = 2 * 60 * 1000
   setTimeout(() => {
-    ctx.broker.call('devicemanager.monitor')
-  }, RUN_INTERVAL)
+    ctx.broker.call('devicemanager.monitor', {
+      RunInterval: ctx.params.RunInterval,
+    })
+  }, ctx.params.RunInterval)
 }
 

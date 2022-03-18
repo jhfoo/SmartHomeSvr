@@ -18,14 +18,14 @@ async function getMetrics(ctx, DeviceId, config) {
   
   try {
     if ('power' in states.emeter.realtime) {
-      ctx.broker.logger.debug(`Metric 'power' for ${DeviceId}: ${states.emeter.realtime.power}`)    
+      // ctx.broker.logger.debug(`Metric 'power' for ${DeviceId}: ${states.emeter.realtime.power}`)    
       ctx.params.metrics.energy.set({
         device: DeviceId,
       }, states.emeter.realtime.power)
     }
   
     if ('relay_state' in states.sysInfo) {
-      ctx.broker.logger.debug(`Metric 'PowerRelay' for ${DeviceId}: ${states.sysInfo.relay_state}`)    
+      // ctx.broker.logger.debug(`Metric 'PowerRelay' for ${DeviceId}: ${states.sysInfo.relay_state}`)    
       ctx.params.metrics.PowerRelay.set({
         device: DeviceId,
       }, states.sysInfo.relay_state)

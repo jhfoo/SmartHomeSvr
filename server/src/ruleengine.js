@@ -53,6 +53,10 @@ broker.start()
 
 
 function startMonitoring() {
-  
+  const RUN_INTERVAL = 2 * 60 * 1000
+
+  broker.call('devicemanager.monitor', {
+    RunInterval: RUN_INTERVAL,
+  })
 }
 

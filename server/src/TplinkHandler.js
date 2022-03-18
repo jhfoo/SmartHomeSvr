@@ -11,7 +11,7 @@ async function onMonitor(ctx, DeviceId, DeviceConfig) {
     DeviceId: DeviceId,
   })
 
-  ctx.broker.logger.debug(`${DeviceId} device state: ${JSON.stringify(DeviceStates, null, 2)}`)
+  // ctx.broker.logger.debug(`${DeviceId} device state: ${JSON.stringify(DeviceStates, null, 2)}`)
 
   if (LastState === null) {
     LastState = DeviceStates.sysInfo.relay_state
