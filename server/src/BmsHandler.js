@@ -3,6 +3,7 @@ module.exports = {
 }
 
 const MIN_CAPACITY = 100,
+  UNDER_RECOVERY_CAPACITY = 120
   MIN_BATTERY_VOLTAGE = 2.9,
   STATE_NORMAL = 'normal',
   STATE_UNDERVOLTAGE = 'undervoltage'
@@ -20,19 +21,26 @@ async function onMonitor(ctx, DeviceId, DeviceConfig) {
   if (DeviceStates.capacity < MIN_CAPACITY 
     && BmsState != STATE_UNDERVOLTAGE) {
     BmsState = STATE_UNDERVOLTAGE
+    // turn off battery to home
     await ctx.broker.call('devicemanager.setState', {
       DeviceId: 'SolarMainsSwitch',
+      StateName: 'power',
+      StateValue: 'off',
+    })
+    // turn off battery to servers
+    await ctx.broker.call('devicemanager.setState', {
+      DeviceId: 'SolarPowerSwitch',
       StateName: 'power',
       StateValue: 'off',
     })
     return
   }
 
-  if (DeviceStates.capacity >= MIN_CAPACITY 
+  if (DeviceStates.capacity >= UNDER_RECOVERY_CAPACITY 
     && BmsState === STATE_UNDERVOLTAGE) {
     BmsState = STATE_NORMAL
     await ctx.broker.call('devicemanager.setState', {
-      DeviceId: 'SolarMainsSwitch',
+      DeviceId: 'SolarPowerSwitch',
       StateName: 'power',
       StateValue: 'on',
     })

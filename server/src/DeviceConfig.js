@@ -8,6 +8,12 @@ module.exports = {
     isMonitor: false,
     isMetric: true,
   },
+  SolarServerSwitch: {
+    ip: '192.168.88.201',
+    driver: 'tplink',
+    isMonitor: false,
+    isMetric: true,
+  },
   SolarAuxSwitch: {
     ip: '192.168.88.51',
     driver: 'tplink',
