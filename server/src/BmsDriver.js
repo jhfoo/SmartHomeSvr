@@ -1,4 +1,5 @@
-const axios = require('axios')
+const axios = require('axios'),
+  BMS = require('./BmsConst')
 
 module.exports = {
   getDeviceStates: getDeviceStates,
@@ -9,6 +10,10 @@ const MIN_CAPACITY = 100,
   MIN_BATTERY_VOLTAGE = 2.9
 
 async function getDeviceStates(ctx, DeviceId, config) {
+  if (!('state' in config)) {
+    config.state = BMS.STATE_NORMAL
+  }
+
   const resp = await axios.get(`http://${config.ip}:8000`)
 
   return resp.data.split('\n').reduce((final, line) => {
@@ -57,6 +62,7 @@ async function getDeviceStates(ctx, DeviceId, config) {
   }, {
     BatteryVoltageMax: 0,
     BatteryVoltageMin: 1000,
+    state: config.state,
   })
 }
 

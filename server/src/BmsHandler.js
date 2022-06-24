@@ -1,15 +1,8 @@
+const BMS = require('./BmsConst')
+
 module.exports = {
   onMonitor: onMonitor,
 }
-
-const MIN_CAPACITY = 100,
-  UNDER_RECOVERY_CAPACITY = 120
-  MIN_BATTERY_VOLTAGE = 2.9,
-  STATE_NORMAL = 'normal',
-  STATE_UNDERVOLTAGE = 'undervoltage'
-  STATE_OVERVOLTAGE = 'overvoltage'
-
-let BmsState = STATE_NORMAL
 
 async function onMonitor(ctx, DeviceId, DeviceConfig) {
   ctx.broker.logger.debug('BmsHandler.onMonitor')
@@ -18,29 +11,33 @@ async function onMonitor(ctx, DeviceId, DeviceConfig) {
     DeviceId: DeviceId,
   })
   ctx.broker.logger.debug(`BMS states: ${JSON.stringify(DeviceStates, null, 2)}`)
-  if (DeviceStates.capacity < MIN_CAPACITY 
-    && BmsState != STATE_UNDERVOLTAGE) {
-    BmsState = STATE_UNDERVOLTAGE
+
+  if (DeviceStates.capacity < BMS.MIN_CAPACITY 
+    && DeviceConfig.state != BMS.STATE_UNDERVOLTAGE) {
+    DeviceConfig.state = BMS.STATE_UNDERVOLTAGE
+    ctx.broker.logger.info('Battery is under voltage')
+    
     // turn off battery to home
     await ctx.broker.call('devicemanager.setState', {
       DeviceId: 'SolarMainsSwitch',
       StateName: 'power',
       StateValue: 'off',
     })
+
     // turn off battery to servers
     await ctx.broker.call('devicemanager.setState', {
-      DeviceId: 'SolarPowerSwitch',
+      DeviceId: 'SolarServerSwitch',
       StateName: 'power',
       StateValue: 'off',
     })
     return
   }
 
-  if (DeviceStates.capacity >= UNDER_RECOVERY_CAPACITY 
-    && BmsState === STATE_UNDERVOLTAGE) {
-    BmsState = STATE_NORMAL
+  if (DeviceStates.capacity >= BMS.UNDER_RECOVERY_CAPACITY 
+    && DeviceConfig.state === BMS.STATE_UNDERVOLTAGE) {
+    DeviceConfig.state = BMS.STATE_NORMAL
     await ctx.broker.call('devicemanager.setState', {
-      DeviceId: 'SolarPowerSwitch',
+      DeviceId: 'SolarServerSwitch',
       StateName: 'power',
       StateValue: 'on',
     })

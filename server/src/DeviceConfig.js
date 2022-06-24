@@ -9,7 +9,7 @@ module.exports = {
     isMetric: true,
   },
   SolarServerSwitch: {
-    ip: '192.168.88.201',
+    ip: '192.168.88.52',
     driver: 'tplink',
     isMonitor: false,
     isMetric: true,

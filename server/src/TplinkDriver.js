@@ -9,6 +9,9 @@ module.exports = {
 const models = {
   'HS103(US)': {
     states: ['power'],
+  },
+  'KP115(US)': {
+    states: ['power'],
   }
 }
 
@@ -31,6 +34,7 @@ async function getMetrics(ctx, DeviceId, config) {
       }, states.sysInfo.relay_state)
     }
   } catch (err) {
+    ctx.broker.logger.error('Error in TplinkDriver.getMetrics()') 
     ctx.broker.logger.error(err)    
   }
 
@@ -49,6 +53,7 @@ async function getDeviceStates(ctx, DeviceId, config) {
 }
 
 async function setDeviceState(ctx, DeviceId, DeviceConfig) {
+  ctx.broker.logger.debug(`TplinkDriver.setDeviceState: ${DeviceId}, ${ctx.params.StateName}, ${ctx.params.StateValue}`)
   let driver = new tplink.Client()
   let device = await driver.getDevice({
     host: DeviceConfig.ip

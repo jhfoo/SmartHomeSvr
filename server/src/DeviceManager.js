@@ -13,6 +13,7 @@ var DeviceConfig = {},
 
 async function getMetrics(ctx) {
   const PromRegistry = PromClient.register
+  PromRegistry.clear()
   ctx.params.metrics = {}
   ctx.params.metrics.energy = new PromClient.Gauge({
     name: 'EnergyW',
@@ -33,19 +34,23 @@ async function getMetrics(ctx) {
   MetricPromises = []
   DeviceIds.forEach(async (DeviceId) => {
     if (DeviceConfig[DeviceId].isMetric) {
+      ctx.broker.logger.debug(`Retrieve metrics for ${DeviceId}`)
       MetricPromises.push(DeviceDrivers[DeviceConfig[DeviceId].driver].getMetrics(ctx, DeviceId, DeviceConfig[DeviceId]))
     }
   })
   try {
     // let DeviceId = DeviceIds[idx]
-    await Promise.all(MetricPromises)
+    const PromiseResults = await Promise.all(MetricPromises.map(p => p.catch(e => e)))
+    const errors = PromiseResults.filter(result => result instanceof Error)
+    ctx.broker.logger.error(`${errors.length} errors retrieving metrics`)
+
+    // get metrics in Prometheus format
     const ret = await PromRegistry.metrics()
-    PromRegistry.clear()
     ctx.meta.$responseType = 'text/plain'
     return ret
   } catch (err) {
     ctx.broker.logger.error(err)
-  }
+  } 
 // for (let idx = 0; idx < DeviceIds.length; idx++) {
   // }
 
