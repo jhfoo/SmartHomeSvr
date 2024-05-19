@@ -1,3 +1,4 @@
 python-kasa
 fastapi
 uvicorn[standard]
+fastapi-mqtt

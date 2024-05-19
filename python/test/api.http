@@ -1,4 +1,4 @@
-post http://192.168.108.54:3002/api/kasa/device
+post http://192.168.108.54:3002/api/kasa/device/command
 
 {
   "DeviceAlias": "Bangkok bedroom",
