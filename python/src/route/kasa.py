@@ -22,7 +22,9 @@ async def init():
 
 async def updateDeviceCache(device):
   print (f'[kasa] discovered device: {device.alias}')
-  KasaDeviceCache.addDevice(device)
+  print (getDeviceAsDict(device))
+  if not device.alias is None:
+    KasaDeviceCache.addDevice(device)
 
 
 def getDeviceAsDict(device):
@@ -60,6 +62,7 @@ async def getDevice(ip: str = None, alias: str = None):
 async def getDevices():
   ret = {}
   for device in KasaDeviceCache.devices():
+    print (f'Updating device: {device.alias}')
     await asyncio.create_task(device.update())
     ret[device.alias] = getDeviceAsDict(device) 
 

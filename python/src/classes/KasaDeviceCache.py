@@ -13,6 +13,15 @@ class KasaDeviceCache:
     return KasaDeviceCache._DeviceCache.values()
 
   @staticmethod
+  async def getDeviceByMac(mac:str, isUpdate: bool = False):
+    for device in KasaDeviceCache.devices():
+      if device.mac == mac:
+        if isUpdate:
+          await asyncio.create_task(device.update())
+        return device
+    return None
+  
+  @staticmethod
   async def getDeviceByAlias(alias:str, isUpdate: bool = False):
     if alias in KasaDeviceCache._DeviceCache:
       device = KasaDeviceCache._DeviceCache[alias]
@@ -32,6 +41,16 @@ class KasaDeviceCache:
 
   @staticmethod
   async def doCommand(device, cmd: dict):
+    """
+    Send a command to the device.  Currently only supports the "power" command
+    which can take the following values:
+      - on: turn the device on
+      - off: turn the device off
+      - toggle: toggle the device's power state
+
+    Returns the result of the command or None if the device doesn't support
+    the command.
+    """
     if 'power' in cmd:
       ret = None
       if cmd['power'] == 'on':

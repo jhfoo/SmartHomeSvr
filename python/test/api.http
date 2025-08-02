@@ -1,7 +1,7 @@
-post http://192.168.108.54:3002/api/kasa/device/command
+post http://192.168.108.18:3002/api/kasa/device/command
 
 {
-  "DeviceAlias": "Bangkok bedroom",
+  "DeviceAlias": "front door desk lamp",
   "cmd": {
     "power": "toggle"
   }

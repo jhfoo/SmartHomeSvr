@@ -1,4 +1,5 @@
-python-kasa
-fastapi
-uvicorn[standard]
+apscheduler
+fastapi[standard]
 fastapi-mqtt
+python-kasa
+pyyaml
