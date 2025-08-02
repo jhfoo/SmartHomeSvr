@@ -1,17 +1,22 @@
-- name: Entrance
+rooms:
+- id: frontdoor
+  name: Entrance
   devices:
     - mac: 28:EE:52:BA:E2:02
-- name: Parents
+- id: parents
+  name: Parents
   devices:
     - mac: 30:DE:4B:3D:38:88
-- name: Evan
+- id: evan
+  name: Evan
   devices:
     - mac: 10:27:F5:32:59:50
-- name: Living Room
+- id: living
+  name: Living Room
   devices:
     - mac: 5C:A6:E6:4E:9B:EF
     - mac: 5C:A6:E6:4E:9C:0C
-    - mac: 
-- name: Kitchen
+- id: kitchen
+  name: Kitchen
   devices:
     - mac: 5C:A6:E6:4E:9C:EE

@@ -19,6 +19,11 @@ async def init():
   with open("conf/menu.yaml", "r") as f:
     _menu = yaml.safe_load(f)
     print(_menu)
+    return _menu
+
+@router.get('/reload')
+async def reloadMenu():
+  return (await init())
 
 @router.get('/all')
 async def ping():
@@ -34,9 +39,10 @@ async def ping():
       list: A deep copy of the menu with updated device information.
   """
   FullMenu = copy.deepcopy(_menu)
-  for menu in FullMenu:
-    if 'devices' in menu:
-      for MenuDevice in menu['devices']:
+  for room in FullMenu['rooms']:
+    print (room)
+    if 'devices' in room:
+      for MenuDevice in room['devices']:
         if 'mac' in MenuDevice:
           device = await KasaDeviceCache.getDeviceByMac(MenuDevice['mac'], True)
           if not device is None:
@@ -44,5 +50,4 @@ async def ping():
             MenuDevice['isOn'] = device.is_on
           else:
             print(f"Device not found for mac: {MenuDevice['mac']}")
-    print (device.mac)
   return FullMenu
