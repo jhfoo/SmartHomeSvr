@@ -1,0 +1,2 @@
+./node_modules/.bin/nuxt generate
+cp -r .output/public/* /net/chie/web/
