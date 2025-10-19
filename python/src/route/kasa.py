@@ -12,40 +12,13 @@ import kasa
 # custom
 from src.classes.KasaDeviceCache import KasaDeviceCache
 import classes.Config as Config
+import classes.KasaManager as KasaManager
 
 router = APIRouter(
   prefix = '/kasa'
 )
 
-async def scanDevices():
-  print ('[kasa] scanning for devices...')
-  await kasa.Discover.discover(
-    target=Config.getValue('ecosystem.kasa.network'),
-    # target='192.168.86.255',
-    on_discovered=updateDeviceCache,
-    username=Config.getValue('ecosystem.kasa.email'),
-    password=Config.getValue('ecosystem.kasa.password')
-  )
 
-async def init(scheduler):
-  await scanDevices()
-  scheduler.add_job(scanDevices, IntervalTrigger(seconds=5 * 60))
-
-async def updateDeviceCache(device):
-  print (f'[kasa] discovered device: {device.alias}')
-  print (getDeviceAsDict(device))
-  KasaDeviceCache.addDevice(device)
-
-
-def getDeviceAsDict(device):
-  print (device)
-  return {
-    'alias': device.alias,
-    'hardware': device.hw_info,
-    'state': device.state_information,
-    'host': device.host,
-    'hasMeter': device.has_emeter
-  }
 
 @router.get('/device/get')
 async def getDevice(ip: str = None, alias: str = None):
@@ -67,7 +40,7 @@ async def getDevice(ip: str = None, alias: str = None):
       )
 
   # else
-  return getDeviceAsDict(device) 
+  return KasaManager.getDeviceAsDict(device) 
 
 @router.get('/device/list')
 async def getDevices():
@@ -75,7 +48,7 @@ async def getDevices():
   for device in KasaDeviceCache.devices():
     print (f'Updating device: {device.alias}')
     await asyncio.create_task(device.update())
-    ret[device.alias] = getDeviceAsDict(device) 
+    ret[device.alias] = KasaManager.getDeviceAsDict(device) 
 
   return ret
 
@@ -111,6 +84,6 @@ async def setDevice(evt : dict):
 
   if 'cmd' in evt:
     await KasaDeviceCache.doCommand(TargetDevice, evt['cmd'])
-    return getDeviceAsDict(TargetDevice)
+    return KasaManager.getDeviceAsDict(TargetDevice)
 
   return TargetDevice.device_type

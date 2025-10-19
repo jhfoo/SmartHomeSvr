@@ -15,6 +15,7 @@ from fastapi import FastAPI, Response
 sys.path.append('.')
 import src.route.kasa as RouteKasa
 import src.route.menu as RouteMenu
+import classes.KasaManager as KasaManager
 # import src.lib.ProcessImage as ProcessImage
 
 def scheduled_job():
@@ -26,7 +27,8 @@ scheduler = AsyncIOScheduler()
 async def onStartup():
   scheduler.add_job(scheduled_job, IntervalTrigger(seconds=30))
   scheduler.start()
-  await RouteKasa.init(scheduler)
+  await KasaManager.init(scheduler)
+#  await RouteKasa.init(scheduler)
   await RouteMenu.init()
 
   app.include_router(RouteKasa.router, prefix = '/api')
