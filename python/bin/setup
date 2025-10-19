@@ -1,3 +1,16 @@
+if [ -x /usr/local/bin/python3.11 ]; then
+  # it's probably freebsd
+  PYTHON=/usr/local/bin/python3.11
+  sudo pkg install -y rust
+elif [ -x /usr/bin/python ]; then
+  PYTHON=/usr/bin/python
+fi
+
+if [ -z "$PYTHON" ]; then
+  echo "No suitable Python interpreter found."
+  exit 1
+fi
+
 PATH_SCRIPT=`dirname "$0"`
 cd "$PATH_SCRIPT/.."
 
@@ -5,8 +18,9 @@ echo "- Removing existing venv/"
 rm -rf venv
 
 echo "- Installing venv/"
-python3 -m venv venv
+$PYTHON -m venv venv
 
 echo "- Installing Python dependencies"
+./venv/bin/python3 -m pip install --upgrade pip
 ./venv/bin/pip3 install -r conf/requirements.txt
 # ./bin/pip-install-requirements

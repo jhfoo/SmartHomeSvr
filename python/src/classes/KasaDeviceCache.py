@@ -6,7 +6,9 @@ class KasaDeviceCache:
 
   @staticmethod
   def addDevice(device):
-    KasaDeviceCache._DeviceCache[device.alias] = device
+    key = device.alias if device.alias else device.mac
+    if not key in KasaDeviceCache._DeviceCache:
+      KasaDeviceCache._DeviceCache[key] = device
 
   @staticmethod
   def devices():

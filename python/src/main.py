@@ -1,7 +1,5 @@
 # from flask import Flask, request, send_file
 # core
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.interval import IntervalTrigger
 import asyncio
 from typing import Union
 from time import sleep
@@ -9,6 +7,8 @@ import json
 import sys
 
 # community
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import FastAPI, Response
 
 # custom
@@ -26,7 +26,7 @@ scheduler = AsyncIOScheduler()
 async def onStartup():
   scheduler.add_job(scheduled_job, IntervalTrigger(seconds=30))
   scheduler.start()
-  await RouteKasa.init()
+  await RouteKasa.init(scheduler)
   await RouteMenu.init()
 
   app.include_router(RouteKasa.router, prefix = '/api')

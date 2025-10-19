@@ -2,6 +2,7 @@
 import asyncio
 
 # community
+from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
@@ -10,24 +11,34 @@ import kasa
 
 # custom
 from src.classes.KasaDeviceCache import KasaDeviceCache
+import classes.Config as Config
 
 router = APIRouter(
   prefix = '/kasa'
 )
 
-async def init():
-  return asyncio.create_task(kasa.Discover.discover(
-    on_discovered=updateDeviceCache
-  ))
+async def scanDevices():
+  print ('[kasa] scanning for devices...')
+  await kasa.Discover.discover(
+    target=Config.getValue('ecosystem.kasa.network'),
+    # target='192.168.86.255',
+    on_discovered=updateDeviceCache,
+    username=Config.getValue('ecosystem.kasa.email'),
+    password=Config.getValue('ecosystem.kasa.password')
+  )
+
+async def init(scheduler):
+  await scanDevices()
+  scheduler.add_job(scanDevices, IntervalTrigger(seconds=5 * 60))
 
 async def updateDeviceCache(device):
   print (f'[kasa] discovered device: {device.alias}')
   print (getDeviceAsDict(device))
-  if not device.alias is None:
-    KasaDeviceCache.addDevice(device)
+  KasaDeviceCache.addDevice(device)
 
 
 def getDeviceAsDict(device):
+  print (device)
   return {
     'alias': device.alias,
     'hardware': device.hw_info,
