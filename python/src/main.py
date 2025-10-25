@@ -15,6 +15,7 @@ from fastapi import FastAPI, Response
 sys.path.append('.')
 import src.route.kasa as RouteKasa
 import src.route.menu as RouteMenu
+import src.route.metrics as RouteMetrics
 import classes.KasaManager as KasaManager
 # import src.lib.ProcessImage as ProcessImage
 
@@ -33,4 +34,5 @@ async def onStartup():
 
   app.include_router(RouteKasa.router, prefix = '/api')
   app.include_router(RouteMenu.router, prefix = '/api')
+  app.include_router(RouteMetrics.router, prefix="/api")
 

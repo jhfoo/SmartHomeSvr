@@ -3,11 +3,11 @@ import asyncio
 
 # community
 from apscheduler.triggers.interval import IntervalTrigger
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Response
 from pydantic import BaseModel
 from typing import Optional
 from typing_extensions import TypedDict
-import kasa
+from prometheus_client import CollectorRegistry, Gauge, generate_latest
 
 # custom
 from src.classes.KasaDeviceCache import KasaDeviceCache
@@ -87,3 +87,17 @@ async def setDevice(evt : dict):
     return KasaManager.getDeviceAsDict(TargetDevice)
 
   return TargetDevice.device_type
+
+@router.get('/metrics')
+async def getMetrics():
+  metrics = KasaManager.getMetrics()
+  registry = CollectorRegistry()
+  if KasaManager.KEY_POWER in metrics:
+    PowerGauge = Gauge('kasa_power_watts', 'Power usage in watts', ['device'], registry=registry)
+    SampleGauge = Gauge('sample_count', 'Power samples', ['device'], registry=registry)
+    for device_alias in metrics[KasaManager.KEY_POWER]:
+      PowerGauge.labels(device=device_alias).set(metrics[KasaManager.KEY_POWER][device_alias]['average'])
+      SampleGauge.labels(device=device_alias).set(metrics[KasaManager.KEY_POWER][device_alias]['count'])
+
+  KasaManager.resetMetrics()
+  return Response(content=generate_latest(registry), media_type="text/plain")
