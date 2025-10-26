@@ -1,0 +1,15 @@
+default:
+  api_base_url: http://192.168.130.8:3002
+kasa:
+  default:
+    state: on
+pimoroni:
+  default:
+    brightness: 0.5
+    backlight_rgb: [0, 255, 0]
+  presto:
+    default:
+      push_interval_sec: 5
+    mypresto:
+      backlight_rgb: [255, 0, 255]
+    
